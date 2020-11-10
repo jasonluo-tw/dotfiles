@@ -5,5 +5,5 @@ My dotfiles
 - vim
 
 
-Ref:<br>
+Some plugin's reference from:<br>
 https://github.com/weihanglo/dotfiles
