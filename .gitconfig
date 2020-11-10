@@ -1,0 +1,48 @@
+[core]
+        editor = nvim
+        excludesfile = ~/.gitignore
+        compression = 0
+[merge]
+        tool = vim
+[mergetool]
+        prompt = true
+[mergetool "nvim"]
+        cmd = vim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+[mergetool "nvimdiff"]
+        cmd = vim -d $LOCAL $BASE $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+[user]
+[color]
+        ui = true
+        diff = true
+        status = true
+        interactive = true
+[diff]
+        tool = vim
+[difftool]
+        prompt = true
+[difftool "nvim"]
+        cmd = vim -d $LOCAL $REMOTE
+[commit]
+        gpgsign = false
+[alias]
+        lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)'
+        lg2 = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
+	co = checkout
+        ci = commit -v
+        st = status -sb
+        br = branch -vv
+        cp = cherry-pick
+        rb = rebase -i
+        ss = stash
+        sm = submodule
+[filter "lfs"]
+        required = true
+        clean = git-lfs clean -- %f
+        smudge = git-lfs smudge -- %f
+        process = git-lfs filter-process
+
+[push]
+	default = matching
+[user]
+	name = jasonluo
+	email = jason830201@gmail.com
