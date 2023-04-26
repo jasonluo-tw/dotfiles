@@ -1,118 +1,49 @@
+set mouse=c     " Not to use mouse
 set pastetoggle=<F10>
-"set nocompatible              " be iMproved, required
+set nocompatible              " be iMproved, required
 "filetype off                  " required
 filetype plugin on
+let g:polyglot_disabled = ['csv']
 
-call plug#begin('~/.config/nvim/plugins')
-" lsp
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
-Plug 'nvim-lua/diagnostic-nvim'
-Plug 'liuchengxu/vista.vim', { 'on': ['Vista', 'Vista!', 'Vista!!'] }
-
-" folders
-"
-Plug 'preservim/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-" zoom in/out
-Plug 'troydm/zoomwintab.vim', { 'on': 'ZoomWinTabToggle' }
-" <C-d>
-Plug 'mg979/vim-visual-multi'
-" linter
-Plug 'dense-analysis/ale', { 'for': ['javascript', 'typescript'] }
-" snippets <C-j> to expand snippets
-
-Plug 'SirVer/ultisnips'
-Plug 'honza/vim-snippets'
-" filetype
-Plug 'sheerun/vim-polyglot'
-
-" search
-let b:fzf_on = ['Files', 'GitFiles', 'Buffers', 'Commands', 'Rg', 'BCommits', 'Maps']
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim', { 'on': b:fzf_on }
-Plug 'mhinz/vim-grepper', { 'on': ['Grepper', '<plug>(GrepperOperator)'] }
-"Indent
-Plug 'nathanaelkane/vim-indent-guides'
-"auto pairs 
-Plug 'jiangmiao/auto-pairs'
-" fast commenter
-" usage \ + cc to commend, \ + cu to uncommend
-Plug 'scrooloose/nerdcommenter'
-"Plug 'tell-k/vim-autopep8'
-
-"interface
-Plug 'itchyny/lightline.vim'
-Plug 'edkolev/tmuxline.vim', { 'on': ['Tmuxline', 'TmuxlineSnapshot'] }
-"Plug 'rakr/vim-one'
-Plug 'kaicataldo/material.vim', { 'branch': 'main' }
-
-"emmet
-" usage <C-y>, to expand the html tag
-Plug 'mattn/emmet-vim'
-
-" floating terminal
-Plug 'voldikss/vim-floaterm'
-
-call plug#end()
-
-
-"lua require'nvim_lsp'.pyls.setup{on_attach=require'completion'.on_attach}
-lua require("lsp_config")
-
-" Use completion-nvim in every buffer
-"autocmd BufEnter * lua require'completion'.on_attach()
-
-" use omni completion provided by lsp
-autocmd Filetype python,javascript,typescript setlocal omnifunc=v:lua.vim.lsp.omnifunc
-
-
-" snipet
-let g:UltiSnipsExpandTrigger="<c-j>"
-
-""" nvim complettion
-""" Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-""" Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect
-
-" Avoid showing message extra message when using completion
-set shortmess+=c
-
-"nnoremap <silent>gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-"nnoremap <silent><c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-"nnoremap <silent>K     <cmd>lua vim.lsp.buf.hover()<CR>
-let g:diagnostic_enable_virtual_text = 1
-let g:diagnostic_virtual_text_prefix = '?'
-let g:diagnostic_insert_delay = 1
-call sign_define("LspDiagnosticsWarningSign", {"text" : "W", "texthl" : "LspDiagnosticsWarning"})
-call sign_define("LspDiagnosticsErrorSign", {"text" : "x", "texthl" : "LspDiagnosticsError"})
-nnoremap <silent> ]e <cmd>NextDiagnosticCycle<CR>
-nnoremap <silent> [e <cmd>PrevDiagnosticCycle<CR>
-
-"nerd tree
-nmap <F5> :NERDTreeToggle<CR>
-"Open a folder and nerd tree will show up
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
-"If only nerd tree window left, nvim will close
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-"Indient
-let g:indent_guides_enable_on_vim_startup = 1
-set ts=4 sw=4 et
-"let g:indent_guides_start_level = 2
-"let g:indent_guides_guide_size = 1
+" for last-position-jump
+autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif 
 
 " Vista.vim {{{
 let g:vista_default_executive = 'nvim_lsp'
 let g:vista#renderer#enable_icon = 0
 let g:vista_no_mappings = 1
+let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
+let g:vista_echo_cursor_strategy = "both"
+
 nnoremap <localLeader>t <cmd>Vista!!<CR>
+nmap <F6> :Vista!!<CR>
 " }}}
 
-" color vim-one
+" snipet
+let g:UltiSnipsExpandTrigger="<c-j>"
+
+" lsp diagnostics {{{
+"sign define LspDiagnosticsSignError text=✘ texthl=LspDiagnosticsSignError linehl= numhl=
+"sign define LspDiagnosticsSignWarning text=⚠ texthl=LspDiagnosticsSignWarning linehl= numhl=
+"function! SetLSPHighlights()
+"  hi LspDiagnosticsSignError guifg=#ea4466 guibg=None guisp=None cterm=bold
+"  hi LspDiagnosticsSignWarning guifg=#ea4466 guibg=None guisp=None cterm=bold
+"  hi LspDiagnosticsDefaultError guifg=#ea4466 guibg=None guisp=None cterm=bold
+"endfunction
+"autocmd ColorScheme * call SetLSPHighlights()
+
+nnoremap <silent> ]e <cmd>lua vim.diagnostic.goto_next()<CR>
+nnoremap <silent> [e <cmd>lua vim.diagnostic.goto_prev()<CR>
+" }}}
+
+"Indient {{{
+let g:indent_guides_enable_on_vim_startup = 1
+set ts=4 sw=4 et
+"let g:indent_guides_start_level = 2
+"let g:indent_guides_guide_size = 1
+" }}}
+
+" color vim-one {{{
 if (has('termguicolors'))
   set termguicolors
 endif
@@ -122,10 +53,60 @@ if !has('nvim')
   let &t_ZR="\e[23m"
 endif
 
+" NvimTree
+nmap <F5> :NvimTreeToggle<CR>
+"Open a folder and Nvim tree will show up
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NvimTreeToggle' argv()[0] | wincmd p | ene | exe 'cd '.argv()[0] | endif
+
+" lightline
 let g:material_terminal__italics = 1
 let g:material_theme_style = 'default'
 colorscheme material
 let g:lightline = { 'colorscheme': 'material_vim' }
+" }}}
 
-"vista
-nmap <F6> :Vista!!<CR>
+"FZF floating window {{{
+""fzf
+"let $FZF_DEFAULT_OPTS=' --color=dark --color=fg:15,bg:-1,hl:1,fg+:#ffffff,bg+:0,hl+:1 --color=info:0,prompt:0,pointer:12,marker:4,spinner:11,header:-1 --layout=reverse  --margin=1,4'
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+
+"for preview
+let g:height = float2nr(&lines * 0.9)
+let g:width = float2nr(&columns * 0.95)
+let g:preview_width = float2nr(&columns * 0.4)
+let g:fzf_buffers_jump = 1
+let $FZF_DEFAULT_COMMAND =  "find * -path '*/\.*' -prune -o -path 'node_modules/**' -prune -o -path 'target/**' -prune -o -path 'dist/**' -prune -o  -type f -print -o -type l -print 2> /dev/null"
+let $FZF_DEFAULT_OPTS=" --color=dark --color=fg:15,bg:-1,hl:1,fg+:#ffffff,bg+:0,hl+:1 --color=info:0,prompt:0,pointer:12,marker:4,spinner:11,header:-1 --layout=reverse  --margin=1,4 --preview 'if file -i {}|grep -q binary; then file -b {}; else bat --style=changes --color always --line-range :40 {}; fi' --preview-window right:" . g:preview_width
+let g:fzf_layout = { 'window': 'call FloatingFZF(' . g:width . ',' . g:height . ')' }
+
+function! FloatingFZF(width, height)
+"function! FloatingFZF()
+  let buf = nvim_create_buf(v:false, v:true)
+  call setbufvar(buf, '&signcolumn', 'no')
+
+  let height = a:height
+  let width = a:width
+  "let height = float2nr(10)
+  "let width = float2nr(80)
+  let horizontal = float2nr((&columns - width) / 2)
+  let vertical = 1
+
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'row': vertical,
+        \ 'col': horizontal,
+        \ 'width': width,
+        \ 'height': height,
+        \ 'style': 'minimal'
+        \ }
+
+  call nvim_open_win(buf, v:true, opts)
+endfunction
+
+" fzf shortcut
+nnoremap <silent> <C-p> :call fzf#vim#files('.', {'options': '--prompt ""'})<CR>
+nnoremap <silent> <leader>b :Buffers<CR>
+" FZF floating window end }}}
+
+lua require("plugins")

@@ -1,34 +1,66 @@
-local nvim_lsp = require'nvim_lsp'
+local lspconfig = require('lspconfig')
+
+--- Auto-completion capabilities from `hrsh7th/nvim-cmp`
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+local function custom_attach(client, bufnr)
+    print("LSP started.");
+end
 
 local map = function(type, key, value)
 	vim.fn.nvim_buf_set_keymap(0,type,key,value,{noremap = true, silent = true});
 end
 
-local custom_attach = function(client)
-	print("LSP started.");
-	require'completion'.on_attach(client)
-	require'diagnostic'.on_attach(client)
-
-	map('n','gD','<cmd>lua vim.lsp.buf.declaration()<CR>')
-	map('n','gd','<cmd>lua vim.lsp.buf.definition()<CR>')
-	map('n','K','<cmd>lua vim.lsp.buf.hover()<CR>')
-	map('n','gr','<cmd>lua vim.lsp.buf.references()<CR>')
-	map('n','gs','<cmd>lua vim.lsp.buf.signature_help()<CR>')
-	map('n','gi','<cmd>lua vim.lsp.buf.implementation()<CR>')
-	map('n','gt','<cmd>lua vim.lsp.buf.type_definition()<CR>')
-	map('n','<leader>gw','<cmd>lua vim.lsp.buf.document_symbol()<CR>')
-	map('n','<leader>gW','<cmd>lua vim.lsp.buf.workspace_symbol()<CR>')
-	map('n','<leader>ah','<cmd>lua vim.lsp.buf.hover()<CR>')
-	map('n','<leader>af','<cmd>lua vim.lsp.buf.code_action()<CR>')
-	map('n','<leader>ee','<cmd>lua vim.lsp.util.show_line_diagnostics()<CR>')
-	map('n','<leader>ar','<cmd>lua vim.lsp.buf.rename()<CR>')
-	map('n','<leader>=', '<cmd>lua vim.lsp.buf.formatting()<CR>')
-	map('n','<leader>ai','<cmd>lua vim.lsp.buf.incoming_calls()<CR>')
-	map('n','<leader>ao','<cmd>lua vim.lsp.buf.outgoing_calls()<CR>')
+-- Enalbe some language servers
+local servers = { 'tsserver', 'jedi_language_server', 'html', 'bashls' }
+for _, lsp in ipairs(servers) do
+  lspconfig[lsp].setup {
+    on_attach = custom_attach,
+    capabilities = capabilities,
+  }
 end
 
-nvim_lsp.tsserver.setup{on_attach=custom_attach}
-nvim_lsp.jedi_language_server.setup{on_attach=custom_attach} 
---nvim_lsp.pyls_ms.setup{on_attach=custom_attach} 
-nvim_lsp.html.setup{on_attach=custom_attach}
+-- luasnip setup
+local luasnip = require 'luasnip'
 
+-- nvim-cmp setup
+local cmp = require 'cmp'
+cmp.setup {
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-u>'] = cmp.mapping.scroll_docs(-4), -- Up
+    ['<C-d>'] = cmp.mapping.scroll_docs(4), -- Down
+    -- C-b (back) C-f (forward) for snippet placeholder navigation.
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<CR>'] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
+    },
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+  }),
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'luasnip' },
+  },
+}
