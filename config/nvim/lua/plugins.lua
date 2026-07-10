@@ -202,7 +202,7 @@ require('lazy').setup({
           http = {
             openrouter = function()
               return require('codecompanion.adapters').extend('openrouter', {
-                schema = { model = { default = 'openai/gpt-5.4-mini' } },
+                schema = { model = { default = 'openrouter/pareto-code' } },
               })
             end,
           },
@@ -224,7 +224,7 @@ require('lazy').setup({
           __inherited_from = 'openai',
           endpoint = 'https://openrouter.ai/api/v1',
           api_key_name = 'OPENROUTER_API_KEY',
-          model = 'openai/gpt-5.4-mini', -- pick from https://openrouter.ai/models
+          model = 'openrouter/pareto-code', -- pick from https://openrouter.ai/models
         },
       },
     },
