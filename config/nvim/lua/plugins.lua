@@ -183,6 +183,39 @@ require('lazy').setup({
 
   -- floating terminal
   'voldikss/vim-floaterm',
+
+  -- AI: CodeCompanion (chat + inline, uses $ANTHROPIC_API_KEY)
+  {
+    'olimorris/codecompanion.nvim',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-treesitter/nvim-treesitter',
+    },
+    config = function()
+      require('codecompanion').setup({
+        strategies = {
+          chat = { adapter = 'anthropic' },
+          inline = { adapter = 'anthropic' },
+        },
+      })
+    end,
+  },
+
+  -- AI: Avante (Cursor-like, uses $ANTHROPIC_API_KEY)
+  {
+    'yetone/avante.nvim',
+    event = 'VeryLazy',
+    version = false,
+    build = 'make', -- builds the native binary; needs make + a C compiler
+    opts = {
+      provider = 'claude',
+    },
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      'nvim-tree/nvim-web-devicons',
+    },
+  },
 })
 
 -- NvimTree {{{
