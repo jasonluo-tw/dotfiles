@@ -215,7 +215,10 @@ require('lazy').setup({
           http = {
             openrouter = function()
               return require('codecompanion.adapters').extend('openrouter', {
-                schema = { model = { default = 'openrouter/pareto-code' } },
+                schema = {
+                  model = { default = 'openrouter/pareto-code' },
+                  max_tokens = { default = 8192 }, -- default is 64k; lower to fit OpenRouter credits
+                },
               })
             end,
           },
@@ -238,6 +241,7 @@ require('lazy').setup({
           endpoint = 'https://openrouter.ai/api/v1',
           api_key_name = 'OPENROUTER_API_KEY',
           model = 'openrouter/pareto-code', -- pick from https://openrouter.ai/models
+          extra_request_body = { max_tokens = 8192 }, -- lower to fit OpenRouter credits
         },
       },
     },
