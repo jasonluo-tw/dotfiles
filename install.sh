@@ -33,4 +33,10 @@ for d in "$DOTFILES"/config/*; do
   link "$d" "$HOME/.config/$(basename "$d")"
 done
 
+# Individual files inside app dirs that ALSO hold untracked runtime state
+# (sessions, logs, auth) — so we link single files, never the whole directory.
+link "$DOTFILES/claude/CLAUDE.md"     "$HOME/.claude/CLAUDE.md"
+link "$DOTFILES/claude/settings.json" "$HOME/.claude/settings.json"
+link "$DOTFILES/codex/config.toml"    "$HOME/.codex/config.toml"
+
 echo "Done. Remember: secrets live in ~/.zsh_secrets (not tracked here)."

@@ -1,0 +1,12 @@
+personality = "pragmatic"
+model = "gpt-5.5"
+model_reasoning_effort = "medium"
+
+[features]
+multi_agent = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+# NOTE: per-machine [projects."..."] trust entries and [tui.*] UI state are
+# intentionally left out — Codex re-adds them locally as you use it.

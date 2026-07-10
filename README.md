@@ -7,8 +7,15 @@ My personal config files (macOS, zsh + neovim).
 ```
 home/     → symlinked into ~/            (.zshrc, .zprofile, .gitconfig, .tmux.conf, .vimrc, .inputrc)
 config/   → symlinked into ~/.config/    (nvim)
+claude/   → individual files into ~/.claude/   (CLAUDE.md, settings.json)
+codex/    → individual files into ~/.codex/     (config.toml)
 install.sh
 ```
+
+Only the hand-picked config files under `claude/` and `codex/` are linked —
+never the whole `~/.claude` / `~/.codex` dirs, which hold sessions, logs, and
+auth tokens. Codex re-adds per-machine `[projects.*]` trust entries locally;
+that churn is expected and not committed.
 
 ## Install
 

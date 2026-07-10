@@ -1,0 +1,37 @@
+{
+  "model": "opus[1m]",
+  "enabledPlugins": {
+    "superpowers@claude-plugins-official": true,
+    "gws@gws-marketplace": true,
+    "felo-slides@felo-ai": true,
+    "ponytail@ponytail": true,
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "gws-marketplace": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/WadeWarren/gws-claude-plugin.git"
+      }
+    },
+    "felo-ai": {
+      "source": {
+        "source": "github",
+        "repo": "Felo-Inc/felo-skills"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
+  },
+  "effortLevel": "high"
+}
