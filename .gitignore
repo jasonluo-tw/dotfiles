@@ -1,0 +1,10 @@
+# secrets — never commit
+.zsh_secrets
+*.local
+
+# backups created by install.sh
+*.bak-*
+
+# noise
+.DS_Store
+*.nvimlog
