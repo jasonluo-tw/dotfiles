@@ -8,22 +8,42 @@ STAMP="$(date +%Y%m%d%H%M%S)"
 
 # Tools these dotfiles need. Zim, powerlevel10k and lazy.nvim self-bootstrap
 # (from .zshrc / plugins.lua) so they are NOT listed here.
-BREW_PKGS=(neovim fzf bat tmux)
+PKGS=(neovim fzf bat tmux)
 
 install_packages() {
-  read -rp "Install tools via Homebrew (${BREW_PKGS[*]})? [y/N] " ans
+  read -rp "Install tools (${PKGS[*]})? [y/N] " ans
   case "$ans" in
     [Yy]*) ;;
     *) echo "Skipping package install."; return ;;
   esac
-  if ! command -v brew >/dev/null 2>&1; then
-    echo "Installing Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    # put brew on PATH for the rest of this script (Apple Silicon default prefix)
-    [ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
-  echo "Installing packages (already-installed ones are skipped)..."
-  brew install "${BREW_PKGS[@]}"
+
+  case "$(uname -s)" in
+    Darwin)
+      if ! command -v brew >/dev/null 2>&1; then
+        echo "Installing Homebrew..."
+        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        [ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+      fi
+      brew install "${PKGS[@]}"
+      ;;
+    Linux)
+      if command -v apt-get >/dev/null 2>&1; then
+        sudo apt-get update && sudo apt-get install -y "${PKGS[@]}"
+        # Debian/Ubuntu ship bat as `batcat`; the fzf preview in nvim calls `bat`.
+        command -v bat >/dev/null 2>&1 || \
+          { b="$(command -v batcat 2>/dev/null)" && [ -n "$b" ] && sudo ln -sf "$b" /usr/local/bin/bat; }
+      elif command -v dnf >/dev/null 2>&1; then
+        sudo dnf install -y "${PKGS[@]}"
+      elif command -v pacman >/dev/null 2>&1; then
+        sudo pacman -S --needed --noconfirm "${PKGS[@]}"
+      else
+        echo "No supported package manager (apt/dnf/pacman). Install manually: ${PKGS[*]}"
+      fi
+      ;;
+    *)
+      echo "Unsupported OS '$(uname -s)'. Install manually: ${PKGS[*]}"
+      ;;
+  esac
 }
 
 link() {  # link <source> <target>

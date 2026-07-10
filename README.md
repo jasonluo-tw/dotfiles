@@ -25,11 +25,15 @@ cd ~/dotfiles
 ./install.sh
 ```
 
-`install.sh` first installs the required tools via Homebrew
-(`neovim fzf bat tmux` — installing Homebrew itself if missing), then symlinks
-everything into place, backing up any existing file to `<file>.bak-<timestamp>`.
-Re-running it is safe. Use `./install.sh --link-only` to skip the package step
-and just refresh the symlinks.
+`install.sh` first installs the required tools (`neovim fzf bat tmux`), then
+symlinks everything into place, backing up any existing file to
+`<file>.bak-<timestamp>`. It asks before installing anything. Re-running is safe.
+Use `./install.sh --link-only` to skip the package step and just refresh symlinks.
+
+Package install is cross-platform: **macOS** via Homebrew (installed if missing),
+**Linux** via apt / dnf / pacman (whichever is present, using `sudo`). Machine-
+specific PATH entries in `.zshrc` are existence-guarded, so the same file works
+on both.
 
 Zim, powerlevel10k and lazy.nvim bootstrap themselves on first shell / nvim
 launch, so they are not installed here.
