@@ -56,7 +56,9 @@ WORDCHARS=${WORDCHARS//[\/]}
 # Set a custom prefix for the generated aliases. The default prefix is 'G'.
 #zstyle ':zim:git' aliases-prefix 'g'
 
-alias vi="/Users/jason/installs/nvim-macos-arm64/bin/nvim"
+# neovim: put the local install on PATH if present, then just call nvim
+[ -d "$HOME/installs/nvim-macos-arm64/bin" ] && export PATH="$HOME/installs/nvim-macos-arm64/bin:$PATH"
+alias vi="nvim"
 alias py="python3"
 #
 # input
@@ -141,8 +143,8 @@ unset key
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-## add python to PATH
-export PATH=/Users/jason/Library/Python/3.9/bin:$PATH
+## add python to PATH (if that user-site bin exists)
+[ -d "$HOME/Library/Python/3.9/bin" ] && export PATH="$HOME/Library/Python/3.9/bin:$PATH"
 
 ## Secrets (API keys, credentials) live in ~/.zsh_secrets — NOT tracked in the dotfiles repo.
 [ -f ~/.zsh_secrets ] && source ~/.zsh_secrets
@@ -152,25 +154,17 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # pnpm
-export PNPM_HOME="/Users/jason/Library/pnpm"
+export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
-. "$HOME/.local/bin/env"
-export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+[ -d "/opt/homebrew/opt/mysql-client/bin" ] && export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
 
 # Added by Antigravity
-export PATH="/Users/jason/.antigravity/antigravity/bin:$PATH"
+[ -d "$HOME/.antigravity/antigravity/bin" ] && export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
 #export JAVA_HOME="/usr/bin/java"
-
-# >>> Claude Code Router CLI >>>
-# Added by Claude Code Router. Enables the ccr command in new shells.
-#case ":$PATH:" in
-#  *":$HOME/.claude-code-router/bin:"*) ;;
-#  *) export PATH="$HOME/.claude-code-router/bin:$PATH" ;;
-#esac
-# <<< Claude Code Router CLI <<<
