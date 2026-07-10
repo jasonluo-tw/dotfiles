@@ -27,17 +27,19 @@ install_packages() {
       brew install "${PKGS[@]}"
       ;;
     Linux)
+      # `make` is needed to build avante.nvim's native lib; on macOS it comes
+      # with the Xcode Command Line Tools, so it's only added here for Linux.
       if command -v apt-get >/dev/null 2>&1; then
-        sudo apt-get update && sudo apt-get install -y "${PKGS[@]}"
+        sudo apt-get update && sudo apt-get install -y "${PKGS[@]}" make
         # Debian/Ubuntu ship bat as `batcat`; the fzf preview in nvim calls `bat`.
         command -v bat >/dev/null 2>&1 || \
           { b="$(command -v batcat 2>/dev/null)" && [ -n "$b" ] && sudo ln -sf "$b" /usr/local/bin/bat; }
       elif command -v dnf >/dev/null 2>&1; then
-        sudo dnf install -y "${PKGS[@]}"
+        sudo dnf install -y "${PKGS[@]}" make
       elif command -v pacman >/dev/null 2>&1; then
-        sudo pacman -S --needed --noconfirm "${PKGS[@]}"
+        sudo pacman -S --needed --noconfirm "${PKGS[@]}" make
       else
-        echo "No supported package manager (apt/dnf/pacman). Install manually: ${PKGS[*]}"
+        echo "No supported package manager (apt/dnf/pacman). Install manually: ${PKGS[*]} make"
       fi
       ;;
     *)
