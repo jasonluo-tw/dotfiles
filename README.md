@@ -25,8 +25,14 @@ cd ~/dotfiles
 ./install.sh
 ```
 
-`install.sh` symlinks everything into place and backs up any existing file to
-`<file>.bak-<timestamp>` first. Re-running it is safe.
+`install.sh` first installs the required tools via Homebrew
+(`neovim fzf bat tmux` — installing Homebrew itself if missing), then symlinks
+everything into place, backing up any existing file to `<file>.bak-<timestamp>`.
+Re-running it is safe. Use `./install.sh --link-only` to skip the package step
+and just refresh the symlinks.
+
+Zim, powerlevel10k and lazy.nvim bootstrap themselves on first shell / nvim
+launch, so they are not installed here.
 
 ## Secrets
 
