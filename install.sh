@@ -11,6 +11,11 @@ STAMP="$(date +%Y%m%d%H%M%S)"
 BREW_PKGS=(neovim fzf bat tmux)
 
 install_packages() {
+  read -rp "Install tools via Homebrew (${BREW_PKGS[*]})? [y/N] " ans
+  case "$ans" in
+    [Yy]*) ;;
+    *) echo "Skipping package install."; return ;;
+  esac
   if ! command -v brew >/dev/null 2>&1; then
     echo "Installing Homebrew..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
