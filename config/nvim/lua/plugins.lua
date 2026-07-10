@@ -184,7 +184,7 @@ require('lazy').setup({
   -- floating terminal
   'voldikss/vim-floaterm',
 
-  -- AI: CodeCompanion (chat + inline, uses $ANTHROPIC_API_KEY)
+  -- AI: CodeCompanion (chat + inline, via OpenRouter — uses $OPENROUTER_API_KEY)
   {
     'olimorris/codecompanion.nvim',
     dependencies = {
@@ -193,22 +193,40 @@ require('lazy').setup({
     },
     config = function()
       require('codecompanion').setup({
-        strategies = {
-          chat = { adapter = 'anthropic' },
-          inline = { adapter = 'anthropic' },
+        interactions = {
+          chat = { adapter = 'openrouter' },
+          inline = { adapter = 'openrouter' },
+        },
+        -- built-in openrouter adapter; change the model here if you like
+        adapters = {
+          http = {
+            openrouter = function()
+              return require('codecompanion.adapters').extend('openrouter', {
+                schema = { model = { default = 'openai/gpt-5.4-mini' } },
+              })
+            end,
+          },
         },
       })
     end,
   },
 
-  -- AI: Avante (Cursor-like, uses $ANTHROPIC_API_KEY)
+  -- AI: Avante (Cursor-like, via OpenRouter — uses $OPENROUTER_API_KEY)
   {
     'yetone/avante.nvim',
     event = 'VeryLazy',
     version = false,
     build = 'make', -- builds the native binary; needs make + a C compiler
     opts = {
-      provider = 'claude',
+      provider = 'openrouter',
+      providers = {
+        openrouter = {
+          __inherited_from = 'openai',
+          endpoint = 'https://openrouter.ai/api/v1',
+          api_key_name = 'OPENROUTER_API_KEY',
+          model = 'openai/gpt-5.4-mini', -- pick from https://openrouter.ai/models
+        },
+      },
     },
     dependencies = {
       'nvim-lua/plenary.nvim',
