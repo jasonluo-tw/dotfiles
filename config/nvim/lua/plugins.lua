@@ -157,8 +157,13 @@ require('lazy').setup({
   -- filetype
   { 'sheerun/vim-polyglot', event = lazy_events },
 
-  -- Indent guides
-  { 'lukas-reineke/indent-blankline.nvim', main = 'ibl', opts = {} },
+  -- Indent guides (light alternating background shading, not lines)
+  {
+    'nathanaelkane/vim-indent-guides',
+    init = function()
+      vim.g.indent_guides_enable_on_vim_startup = 1
+    end,
+  },
 
   -- snippets <C-j> to expand
   'SirVer/ultisnips',
