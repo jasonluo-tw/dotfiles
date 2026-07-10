@@ -40,7 +40,7 @@ cd ~/dotfiles
 
 `install.sh` does two things:
 
-1. **Installs required tools** — `neovim fzf bat tmux` (asks first).
+1. **Installs required tools** — `neovim fzf bat tmux ripgrep` (asks first).
    - macOS → Homebrew (installs Homebrew itself if missing)
    - Linux → `apt` / `dnf` / `pacman` (whichever is present, via `sudo`; also installs `make`)
 2. **Symlinks** every file above into place, backing up any existing file to

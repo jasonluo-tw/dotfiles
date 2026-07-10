@@ -8,7 +8,7 @@ STAMP="$(date +%Y%m%d%H%M%S)"
 
 # Tools these dotfiles need. Zim, powerlevel10k and lazy.nvim self-bootstrap
 # (from .zshrc / plugins.lua) so they are NOT listed here.
-PKGS=(neovim fzf bat tmux)
+PKGS=(neovim fzf bat tmux ripgrep)
 
 install_packages() {
   read -rp "Install tools (${PKGS[*]})? [y/N] " ans

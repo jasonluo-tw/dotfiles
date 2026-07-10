@@ -184,6 +184,19 @@ require('lazy').setup({
   -- floating terminal
   'voldikss/vim-floaterm',
 
+  -- Treesitter (master branch: compiles parsers with cc, no tree-sitter CLI needed)
+  {
+    'nvim-treesitter/nvim-treesitter',
+    branch = 'master',
+    build = ':TSUpdate',
+    config = function()
+      require('nvim-treesitter.configs').setup({
+        ensure_installed = { 'markdown', 'markdown_inline', 'yaml' },
+        highlight = { enable = true },
+      })
+    end,
+  },
+
   -- AI: CodeCompanion (chat + inline, via OpenRouter — uses $OPENROUTER_API_KEY)
   {
     'olimorris/codecompanion.nvim',
