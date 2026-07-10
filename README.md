@@ -7,8 +7,8 @@ tools and symlinks everything into place.
 
 | File | Links to | What it is |
 |------|----------|------------|
-| `home/.zshrc` | `~/.zshrc` | Shell config (Zim + Powerlevel10k), sources `~/.zsh_secrets` |
-| `home/.zprofile` | `~/.zprofile` | Login-shell setup |
+| `home/.zshrc` | `~/.zshrc` | Shell config (Zim + Powerlevel10k), sources `~/.zsh_secrets` and `~/.zsh_local` |
+| `home/.zprofile` | `~/.zprofile` | Login-shell setup; puts `~/.local/bin` first on `PATH` |
 | `home/.zimrc` | `~/.zimrc` | Zim module list (bootstraps the shell) |
 | `home/.p10k.zsh` | `~/.p10k.zsh` | Powerlevel10k prompt theme |
 | `home/.gitconfig` | `~/.gitconfig` | Git config |
@@ -23,9 +23,11 @@ tools and symlinks everything into place.
 `install.sh` links these; `.gitignore` keeps secrets and backups out of git.
 
 **Not tracked** (on purpose): API keys and credentials live in `~/.zsh_secrets`
-(chmod 600, git-ignored) and are sourced by `.zshrc`. The `~/.claude` and
-`~/.codex` directories hold sessions/logs/auth, so only the individual config
-files above are linked — never the whole directory.
+(chmod 600, git-ignored). Local machine-specific shell customizations such as
+private aliases, exports, PATH entries and functions live in `~/.zsh_local`.
+Both files are sourced by `.zshrc`. The `~/.claude` and `~/.codex` directories
+hold sessions/logs/auth, so only the individual config files above are linked —
+never the whole directory.
 
 ## New machine setup
 
@@ -58,10 +60,16 @@ export OPENAI_API_KEY="..."
 EOF
 chmod 600 ~/.zsh_secrets
 
-# 4. Start a new shell — Zim, Powerlevel10k and its modules bootstrap themselves
+# 4. Add local shell customizations (also NOT in the repo)
+cat > ~/.zsh_local <<'EOF'
+alias work='cd ~/work'
+export SOME_LOCAL_SETTING="..."
+EOF
+
+# 5. Start a new shell — Zim, Powerlevel10k and its modules bootstrap themselves
 exec zsh
 
-# 5. Open neovim — lazy.nvim bootstraps and installs all plugins
+# 6. Open neovim — lazy.nvim bootstraps and installs all plugins
 nvim
 ```
 
@@ -70,8 +78,14 @@ on first launch, so they aren't part of `install.sh`.
 
 ## Notes
 
-- **Neovim** requires ≥ 0.11. `:Lazy restore` reproduces the exact pinned plugin
-  versions from `lazy-lock.json`.
+- **Neovim** requires >= 0.11; this setup is currently verified with 0.12.4.
+  `:Lazy restore` reproduces the exact pinned plugin versions from
+  `lazy-lock.json`. If the OS package manager is behind, install the official
+  release under `~/.local/opt/nvim-linux-x86_64-<version>` and symlink
+  `~/.local/bin/nvim` to its `bin/nvim`; `.zprofile` puts `~/.local/bin` first.
+- **Local shell config**: use `~/.zsh_secrets` only for credentials, and
+  `~/.zsh_local` for private aliases, exports, PATH entries and functions.
+  `home/.zsh_local` is explicitly git-ignored.
 - **AI plugins** (CodeCompanion, Avante) use OpenRouter — set `OPENROUTER_API_KEY`.
   Avante builds a small native lib via `make` on first install.
 - **Portability**: machine-specific paths in `.zshrc` are existence-guarded, so

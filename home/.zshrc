@@ -152,6 +152,9 @@ unset key
 ## Secrets (API keys, credentials) live in ~/.zsh_secrets — NOT tracked in the dotfiles repo.
 [ -f ~/.zsh_secrets ] && source ~/.zsh_secrets
 
+## Local machine-specific shell config (aliases, exports, functions) — NOT tracked.
+[ -f ~/.zsh_local ] && source ~/.zsh_local
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -169,4 +172,3 @@ esac
 
 # Added by Antigravity
 [ -d "$HOME/.antigravity/antigravity/bin" ] && export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
-

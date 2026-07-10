@@ -1,5 +1,6 @@
 # secrets — never commit
 .zsh_secrets
+home/.zsh_local
 *.local
 
 # backups created by install.sh
