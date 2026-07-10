@@ -60,6 +60,9 @@ WORDCHARS=${WORDCHARS//[\/]}
 [ -d "$HOME/installs/nvim-macos-arm64/bin" ] && export PATH="$HOME/installs/nvim-macos-arm64/bin:$PATH"
 alias vi="nvim"
 alias py="python3"
+
+# Free up Ctrl+S / Ctrl+Q (disable terminal flow control) so apps like nvim can use them
+stty -ixon 2>/dev/null
 #
 # input
 #
@@ -167,4 +170,3 @@ esac
 # Added by Antigravity
 [ -d "$HOME/.antigravity/antigravity/bin" ] && export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
-#export JAVA_HOME="/usr/bin/java"
