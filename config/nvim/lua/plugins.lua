@@ -189,17 +189,29 @@ require('lazy').setup({
   -- floating terminal
   'voldikss/vim-floaterm',
 
-  -- Treesitter (master branch: compiles parsers with cc, no tree-sitter CLI needed)
+  -- Treesitter (main branch — the supported branch for Neovim 0.11+; master is
+  -- deprecated. Needs the tree-sitter CLI to compile parsers, see install.sh.)
   {
     'nvim-treesitter/nvim-treesitter',
-    branch = 'master',
+    branch = 'main',
     build = ':TSUpdate',
     config = function()
-      require('nvim-treesitter.configs').setup({
-        ensure_installed = { 'markdown', 'markdown_inline', 'yaml' },
-        highlight = { enable = true },
+      require('nvim-treesitter').install({ 'markdown', 'markdown_inline', 'yaml' })
+      -- main branch no longer auto-enables highlighting; start it per filetype
+      vim.api.nvim_create_autocmd('FileType', {
+        pattern = { 'markdown', 'yaml' },
+        callback = function() pcall(vim.treesitter.start) end,
       })
     end,
+  },
+
+  -- In-buffer markdown rendering (headings, code blocks, bullets, tables).
+  -- Toggle with :RenderMarkdown toggle. Uses the treesitter markdown parser.
+  {
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    ft = { 'markdown' },
+    opts = {},
   },
 
   -- AI: CodeCompanion (chat + inline, via OpenRouter — uses $OPENROUTER_API_KEY)

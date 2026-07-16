@@ -8,7 +8,7 @@ STAMP="$(date +%Y%m%d%H%M%S)"
 
 # Tools these dotfiles need. Zim, powerlevel10k and lazy.nvim self-bootstrap
 # (from .zshrc / plugins.lua) so they are NOT listed here.
-PKGS=(neovim fzf bat tmux ripgrep)
+PKGS=(neovim fzf bat tmux ripgrep tree-sitter-cli)
 
 install_packages() {
   read -rp "Install tools (${PKGS[*]})? [y/N] " ans
@@ -46,6 +46,15 @@ install_packages() {
       echo "Unsupported OS '$(uname -s)'. Install manually: ${PKGS[*]}"
       ;;
   esac
+
+  # nvim's ts_ls LSP needs the classic typescript-language-server, which wants
+  # TypeScript 5.x (npm/brew "latest" is now the native TS 7, no tsserver.js).
+  # Not a system package, so install via npm if it's available.
+  if command -v npm >/dev/null 2>&1; then
+    npm install -g typescript@5 typescript-language-server
+  else
+    echo "npm not found; skipping TypeScript LSP. Install: npm i -g typescript@5 typescript-language-server"
+  fi
 }
 
 link() {  # link <source> <target>
