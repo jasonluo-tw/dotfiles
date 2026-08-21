@@ -117,16 +117,7 @@ require('lazy').setup({
     config = nvim_tree_config,
   },
 
-  -- Github copilot
-  'github/copilot.vim',
   'nvim-lua/plenary.nvim',
-  {
-    'CopilotC-Nvim/CopilotChat.nvim',
-    branch = 'main',
-    config = function()
-      require('CopilotChat').setup()
-    end,
-  },
 
   -- zoom in/out
   { 'troydm/zoomwintab.vim', cmd = 'ZoomWinTabToggle' },
@@ -220,7 +211,7 @@ require('lazy').setup({
       -- Default code bg links to ColorColumn, which in this theme is a loud
       -- blue-grey (#65738e) meant for the column marker — reads as a garish
       -- box. Use a subtle surface shade just above Normal instead.
-      -- ponytail: hardcoded to the current (Material) theme; revisit if theme changes.
+      -- NOTE: hardcoded to the current (Material) theme; revisit if theme changes.
       local function code_hl()
         vim.api.nvim_set_hl(0, 'RenderMarkdownCode', { bg = '#2f3e44' })
         vim.api.nvim_set_hl(0, 'RenderMarkdownCodeInline', { bg = '#2f3e44' })
@@ -233,6 +224,7 @@ require('lazy').setup({
   -- AI: CodeCompanion (chat + inline, via OpenRouter — uses $OPENROUTER_API_KEY)
   {
     'olimorris/codecompanion.nvim',
+    enabled = false,
     dependencies = {
       'nvim-lua/plenary.nvim',
       'nvim-treesitter/nvim-treesitter',
@@ -284,6 +276,41 @@ require('lazy').setup({
       'nvim-tree/nvim-web-devicons',
     },
   },
+
+  -- AI: minuet inline completion (ghost text, via OpenRouter — uses $OPENROUTER_API_KEY)
+  {
+    'milanglacier/minuet-ai.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require('minuet').setup({
+        provider = 'openai_compatible',
+        provider_options = {
+          openai_compatible = {
+            end_point = 'https://openrouter.ai/api/v1/chat/completions',
+            api_key = 'OPENROUTER_API_KEY', -- env var NAME, not the key itself
+            model = 'qwen/qwen3-coder-30b-a3b-instruct', -- cheap + fast; see openrouter.ai/models
+            name = 'Openrouter',
+            stream = true,
+            optional = {
+              -- no thinking tokens: they add latency and cost for zero gain on completion
+              reasoning = { enabled = false },
+              max_tokens = 512,
+            },
+          },
+        },
+        -- ghost text only; the nvim-cmp source stays off so suggestions don't show up twice
+        virtualtext = {
+          auto_trigger_ft = { '*' },
+          keymap = {
+            accept = '<C-f>', -- inherited from the old copilot.vim mapping
+            next = '<C-v>',
+            prev = '<C-r>',
+            dismiss = '<C-e>',
+          },
+        },
+      })
+    end,
+  },
 })
 
 -- NvimTree {{{
@@ -292,13 +319,6 @@ vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
--- }}}
-
--- Copilot {{{
-vim.cmd([[imap <silent><script><expr> <C-f> copilot#Accept("")]])
-vim.keymap.set('i', '<C-v>', '<Plug>(copilot-next)')
-vim.keymap.set('i', '<C-r>', '<Plug>(copilot-previous)')
-vim.g.copilot_no_tab_map = true
 -- }}}
 
 -- Diagnostic {{{
