@@ -187,10 +187,10 @@ require('lazy').setup({
     branch = 'main',
     build = ':TSUpdate',
     config = function()
-      require('nvim-treesitter').install({ 'markdown', 'markdown_inline', 'yaml' })
+      require('nvim-treesitter').install({ 'markdown', 'markdown_inline', 'yaml', 'python' })
       -- main branch no longer auto-enables highlighting; start it per filetype
       vim.api.nvim_create_autocmd('FileType', {
-        pattern = { 'markdown', 'yaml' },
+        pattern = { 'markdown', 'yaml', 'python' },
         callback = function() pcall(vim.treesitter.start) end,
       })
     end,
@@ -282,19 +282,36 @@ require('lazy').setup({
     'milanglacier/minuet-ai.nvim',
     dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
+      require('minuet_imports').setup()
+      require('minuet_neighbors').setup()
       require('minuet').setup({
+        context_window = 8192,
         provider = 'openai_compatible',
         provider_options = {
           openai_compatible = {
             end_point = 'https://openrouter.ai/api/v1/chat/completions',
             api_key = 'OPENROUTER_API_KEY', -- env var NAME, not the key itself
-            model = 'qwen/qwen3-coder-30b-a3b-instruct', -- cheap + fast; see openrouter.ai/models
+            model = 'deepseek/deepseek-v4-flash-0731',
             name = 'Openrouter',
             stream = true,
             optional = {
               -- no thinking tokens: they add latency and cost for zero gain on completion
               reasoning = { enabled = false },
-              max_tokens = 512,
+              provider = { sort = 'throughput' },
+              max_tokens = 128,
+            },
+            -- inject signatures/docstrings resolved for calls near the cursor
+            -- (lua/minuet_imports.lua) and Copilot-style "neighboring tabs"
+            -- snippets from other open buffers (lua/minuet_neighbors.lua)
+            -- ahead of the usual before/after-cursor context
+            chat_input = {
+              template = '{{{nearby_calls}}}{{{neighboring_files}}}{{{language}}}\n{{{tab}}}\n<contextAfterCursor>\n{{{context_after_cursor}}}\n<contextBeforeCursor>\n{{{context_before_cursor}}}<cursorPosition>',
+              nearby_calls = function()
+                return require('minuet_imports').get_context()
+              end,
+              neighboring_files = function()
+                return require('minuet_neighbors').get_context()
+              end,
             },
           },
         },
