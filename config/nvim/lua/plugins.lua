@@ -211,7 +211,23 @@ require('lazy').setup({
     'MeanderingProgrammer/render-markdown.nvim',
     dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
     ft = { 'markdown' },
-    opts = {},
+    config = function()
+      require('render-markdown').setup({
+        -- Trim padding so tables stay as narrow as possible — more of them fit
+        -- the window and render (rendering is disabled once scrolled sideways).
+        pipe_table = { cell = 'trimmed' },
+      })
+      -- Default code bg links to ColorColumn, which in this theme is a loud
+      -- blue-grey (#65738e) meant for the column marker — reads as a garish
+      -- box. Use a subtle surface shade just above Normal instead.
+      -- ponytail: hardcoded to the current (Material) theme; revisit if theme changes.
+      local function code_hl()
+        vim.api.nvim_set_hl(0, 'RenderMarkdownCode', { bg = '#2f3e44' })
+        vim.api.nvim_set_hl(0, 'RenderMarkdownCodeInline', { bg = '#2f3e44' })
+      end
+      code_hl()
+      vim.api.nvim_create_autocmd('ColorScheme', { callback = code_hl })
+    end,
   },
 
   -- AI: CodeCompanion (chat + inline, via OpenRouter — uses $OPENROUTER_API_KEY)
