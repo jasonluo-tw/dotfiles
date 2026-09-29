@@ -105,8 +105,15 @@ require('lazy').setup({
   'L3MON4D3/LuaSnip',
   { 'hrsh7th/cmp-path' },
 
-  -- lsp (config lives in lua/lsp_config.lua)
-  { 'neovim/nvim-lspconfig', config = function() require('lsp_config') end },
+  -- LSP configuration and Mason-managed language server installation.
+  {
+    'neovim/nvim-lspconfig',
+    dependencies = {
+      { 'mason-org/mason.nvim', opts = {} },
+      'mason-org/mason-lspconfig.nvim',
+    },
+    config = function() require('lsp_config') end,
+  },
 
   { 'liuchengxu/vista.vim', cmd = { 'Vista' } }, -- :Vista!! still triggers via the Vista stub
 
@@ -274,6 +281,10 @@ require('lazy').setup({
       'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
       'nvim-tree/nvim-web-devicons',
+      {
+        'ColinKennedy/mega.cmdparse',
+        dependencies = { 'ColinKennedy/mega.logging' },
+      },
     },
   },
 

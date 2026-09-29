@@ -1,6 +1,7 @@
 
 --- Auto-completion capabilities from `hrsh7th/nvim-cmp`
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local servers = { 'ts_ls', 'jedi_language_server', 'html', 'bashls' }
 
 -- Defaults applied to every server (nvim 0.11+ vim.lsp.config API).
 -- Server definitions themselves still ship with nvim-lspconfig (its lsp/*.lua files).
@@ -11,8 +12,13 @@ vim.lsp.config('*', {
   end,
 })
 
--- Enable language servers
-vim.lsp.enable({ 'ts_ls', 'jedi_language_server', 'html', 'bashls' })
+-- Mason installs the server binaries; keep activation explicit so the shared
+-- capabilities above are applied before any clients start.
+require('mason-lspconfig').setup({
+  ensure_installed = servers,
+  automatic_enable = false,
+})
+vim.lsp.enable(servers)
 
 -- luasnip setup
 local luasnip = require 'luasnip'
