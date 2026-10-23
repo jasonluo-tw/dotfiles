@@ -284,6 +284,21 @@ require('lazy').setup({
     config = function()
       require('minuet_imports').setup()
       require('minuet_neighbors').setup()
+      -- minuet's few-shot examples train the model on a clean prompt shape
+      -- (language/tab/contextAfterCursor/contextBeforeCursor only); explain
+      -- our two extra blocks explicitly so the model isn't guessing at
+      -- unlabeled input it was never shown an example of.
+      local minuet_config = require('minuet.config')
+      local system_with_extra_markers = vim.tbl_extend('force', {}, minuet_config.default_system_prefix_first)
+      system_with_extra_markers.prompt = system_with_extra_markers.prompt
+        .. [[
+- `<nearby_call_definitions>`: signatures and docstrings for functions/methods
+  called near the cursor, resolved from other files. Reference only -- do not
+  repeat them in the completion.
+- `<neighboring_files>`: code snippets from other open files with similar
+  content, for style/pattern reference only -- do not repeat them in the completion.
+]]
+
       require('minuet').setup({
         context_window = 8192,
         provider = 'openai_compatible',
@@ -300,6 +315,7 @@ require('lazy').setup({
               provider = { sort = 'throughput' },
               max_tokens = 128,
             },
+            system = system_with_extra_markers,
             -- inject signatures/docstrings resolved for calls near the cursor
             -- (lua/minuet_imports.lua) and Copilot-style "neighboring tabs"
             -- snippets from other open buffers (lua/minuet_neighbors.lua)
