@@ -42,7 +42,9 @@ cd ~/dotfiles
 
 `install.sh` does two things:
 
-1. **Installs required tools** — `neovim fzf bat tmux ripgrep` (asks first).
+1. **Installs required tools and fonts** — `neovim fzf bat tmux ripgrep
+   tree-sitter-cli` plus Powerlevel10k's recommended `MesloLGS NF` font (asks
+   first).
    - macOS → Homebrew (installs Homebrew itself if missing)
    - Linux → `apt` / `dnf` / `pacman` (whichever is present, via `sudo`; also installs `make`)
 2. **Symlinks** every file above into place, backing up any existing file to
@@ -75,6 +77,11 @@ nvim
 
 That's it. `zimfw`, Powerlevel10k, `lazy.nvim` and its plugins all self-install
 on first launch, so they aren't part of `install.sh`.
+
+On iTerm2, select **MesloLGS NF** under **Settings → Profiles → Text → Font**
+after the first install, then restart iTerm2. Keep **Use a different font for
+non-ASCII text** disabled so Powerlevel10k's Nerd Font symbols use Meslo while
+macOS automatically falls back to its system font for Chinese characters.
 
 ## Notes
 

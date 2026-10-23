@@ -3,7 +3,7 @@ set nocompatible              " be iMproved, required
 "filetype off                  " required
 filetype plugin on
 let g:polyglot_disabled = ['csv']
-let g:python3_host_prog = '/usr/bin/python3'
+let g:python3_host_prog = stdpath('data') . '/python-host/bin/python'
 
 " for last-position-jump
 autocmd BufReadPost * if @% !~# '\.git[\/\\]COMMIT_EDITMSG$' && line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g`\"" | endif 
@@ -106,4 +106,3 @@ nnoremap <silent> <leader>b :Buffers<CR>
 
 
 lua require("plugins")
-
